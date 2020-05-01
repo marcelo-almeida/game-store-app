@@ -2,5 +2,6 @@ version: '3.4'
 services:
   app:
     image: game-store:{version}
+    container_name: game-store
     ports:
       - 8080:8080

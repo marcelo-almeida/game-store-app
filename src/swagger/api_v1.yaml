@@ -1,0 +1,19 @@
+swagger: "2.0"
+info:
+  description: "Game store api"
+  version: "1"
+  title: "Swagger game-store"
+schemes:
+- "https"
+- "http"
+paths:
+  /game:
+    get:
+      responses:
+        "200":
+          description: "successful operation"
+  /platform:
+    get:
+      responses:
+        "200":
+          description: "successful operation"

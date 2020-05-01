@@ -12,8 +12,78 @@ paths:
       responses:
         "200":
           description: "successful operation"
+    post:
+      responses:
+        "200":
+          description: "successful operation"
+  /game/{game_id}:
+    get:
+      parameters:
+      - name: "game_id"
+        in: "path"
+        description: "ID of game"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+    put:
+      parameters:
+      - name: "game_id"
+        in: "path"
+        description: "ID of game"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+    delete:
+      parameters:
+      - name: "game_id"
+        in: "path"
+        description: "ID of game"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
   /platform:
     get:
+      responses:
+        "200":
+          description: "successful operation"
+    post:
+      responses:
+        "200":
+          description: "successful operation"
+  /platform/{platform_id}:
+    get:
+      parameters:
+      - name: "platform_id"
+        in: "path"
+        description: "ID of platform"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+    put:
+      parameters:
+      - name: "platform_id"
+        in: "path"
+        description: "ID of platform"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+    delete:
+      parameters:
+      - name: "platform_id"
+        in: "path"
+        description: "ID of platform"
+        required: true
+        type: "string"
       responses:
         "200":
           description: "successful operation"

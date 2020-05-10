@@ -1,5 +1,4 @@
 connexion==2.7.0
 boto3
 botocore
-nose
-parameterized
+flask

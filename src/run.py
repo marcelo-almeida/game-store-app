@@ -3,7 +3,7 @@ from connexion.resolver import RestyResolver
 import logging
 
 app = connexion.App(__name__, specification_dir='swagger/')
-app.add_api('api_v1.yaml', base_path='/v1', resolver=RestyResolver('controller.v1'))
+app.add_api('api_v1.yaml', base_path='/v1', resolver=RestyResolver('controller.v1'), strict_validation=True)
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',

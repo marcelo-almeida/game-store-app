@@ -1,6 +1,37 @@
+import uuid
+from datetime import datetime
+
 from boto3.dynamodb.conditions import Attr
 
 from persistence.base_repository import BaseRepository
+
+VALID_CREATE_KEYS = ['name', 'subtype']
+VALID_CREATE_TYPES = {'name': str, 'subtype': str}
+
+VALID_UPDATE_KEYS = ['name', 'platformId', 'subtype']
+VALID_UPDATE_TYPES = {'name': str, 'platformId': str, 'subtype': str}
+
+
+class Platform:
+
+    def __init__(self, request: dict):
+        now = datetime.utcnow()
+        self.platform_id = request['platformId'] \
+            if 'platformId' in request else str(uuid.uuid4())
+        self.name = request['name']
+        self.subtype = request['subtype'] if 'subtype' in request else None
+        self.modification_date = request['modificationDate'] \
+            if 'modificationDate' in request else int(datetime.timestamp(now))
+        self.creation_date = request['creationDate'] \
+            if 'creationDate' in request else int(datetime.timestamp(now))
+
+    @staticmethod
+    def _to_camel_case(snake_case: str) -> str:
+        words = snake_case.split('_')
+        return words[0] + ''.join(word.title() for word in words[1:])
+
+    def to_dict(self) -> dict:
+        return {self._to_camel_case(key): value for key, value in self.__dict__.items() if value}
 
 
 class PlatformRepository(BaseRepository):

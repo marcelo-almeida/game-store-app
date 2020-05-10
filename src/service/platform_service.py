@@ -11,7 +11,8 @@ def create_platform(request: dict) -> dict:
     if 'error' not in validator:
         platform = Platform(name=request.get('name'),
                             subtype=request.get('subtype')).build_to_create().to_dict()
-        # TODO: save item
+        repository = PlatformRepository()
+        repository.save(platform=platform)
         return platform
     else:
         return validator
@@ -29,7 +30,7 @@ def update_platform(request: dict) -> dict:
                             subtype=request.get('subtype'),
                             platform_id=platform_db.platform_id,
                             creation_date=platform_db.creation_date).build_to_update().to_dict()
-        # TODO: update item
+        repository.save(platform=platform)
         return platform
     else:
         return validator

@@ -77,8 +77,12 @@ class PlatformRepository(BaseRepository):
             }
         )
 
-    def search(self, name: str = None, sub_type: str = None) -> list:
-        if name and sub_type:
+    def search(self, name: str = None, sub_type: str = None, validate: bool = False) -> list:
+        if validate and name:
+            response = self._validate_name(name=name)
+        elif validate and sub_type:
+            response = self._validate_sub_type(sub_type=sub_type)
+        elif name and sub_type:
             response = self._search_by_name_and_sub_type(name=name, sub_type=sub_type)
         elif name:
             response = self._search_by_name(name=name)
@@ -90,6 +94,16 @@ class PlatformRepository(BaseRepository):
         for item in response.get('Items'):
             items.append(self._build_platform(item=item))
         return items
+
+    def _validate_name(self, name: str) -> list:
+        return self.table.scan(
+            FilterExpression=Attr('name').eq(name)
+        )
+
+    def _validate_sub_type(self, sub_type: str) -> list:
+        return self.table.scan(
+            FilterExpression=Attr('subtype').eq(sub_type)
+        )
 
     def _search_by_name(self, name: str) -> list:
         return self.table.scan(

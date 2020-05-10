@@ -14,16 +14,25 @@ VALID_UPDATE_TYPES = {'name': str, 'platformId': str, 'subtype': str}
 
 class Platform:
 
-    def __init__(self, request: dict):
+    def __init__(self, name: str, subtype: str = None, platform_id: str = None, creation_date: int = None,
+                 modification_date: int = None):
+        self.name = name
+        self.subtype = subtype
+        self.platform_id = platform_id
+        self.creation_date = creation_date
+        self.modification_date = modification_date
+
+    def build_to_create(self):
         now = datetime.utcnow()
-        self.platform_id = request['platformId'] \
-            if 'platformId' in request else str(uuid.uuid4())
-        self.name = request['name']
-        self.subtype = request['subtype'] if 'subtype' in request else None
-        self.modification_date = request['modificationDate'] \
-            if 'modificationDate' in request else int(datetime.timestamp(now))
-        self.creation_date = request['creationDate'] \
-            if 'creationDate' in request else int(datetime.timestamp(now))
+        self.platform_id = str(uuid.uuid4())
+        self.modification_date = int(datetime.timestamp(now))
+        self.creation_date = int(datetime.timestamp(now))
+        return self
+
+    def build_to_update(self):
+        now = datetime.utcnow()
+        self.modification_date = int(datetime.timestamp(now))
+        return self
 
     @staticmethod
     def _to_camel_case(snake_case: str) -> str:
@@ -39,16 +48,27 @@ class PlatformRepository(BaseRepository):
     def __init__(self):
         super().__init__(table_name='store-platform')
 
+    @staticmethod
+    def _build_platform(item: dict) -> Platform:
+        return Platform(name=item.get('name'),
+                        subtype=item.get('subtype'),
+                        platform_id=item.get('platformId'),
+                        creation_date=item.get('creationDate'),
+                        modification_date=item.get('modificationDate'))
+
     def save(self, platform: dict):
         self.table.put_item(Item=platform)
 
-    def get(self, platform_id: str) -> dict:
+    def get(self, platform_id: str):
         response = self.table.get_item(
             Key={
                 'platformId': platform_id
             }
         )
-        return response.get('Item')
+        if response.get('Item'):
+            return self._build_platform(item=response.get('Item'))
+        else:
+            return None
 
     def delete(self, platform_id: str):
         self.table.delete_item(
@@ -66,7 +86,10 @@ class PlatformRepository(BaseRepository):
             response = self._search_by_sub_type(sub_type=sub_type)
         else:
             response = self.table.scan()
-        return response.get('Items')
+        items = []
+        for item in response.get('Items'):
+            items.append(self._build_platform(item=item))
+        return items
 
     def _search_by_name(self, name: str) -> list:
         return self.table.scan(

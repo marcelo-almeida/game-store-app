@@ -1,6 +1,9 @@
+from unittest.mock import patch
+
 from nose.tools import assert_equal, assert_true
 from parameterized import parameterized
 
+from persistence.platform import Platform
 from service.platform_service import create_platform, update_platform
 
 
@@ -60,9 +63,13 @@ def test_create_platform(request, is_created: bool):
     ({}, False),
     ([], False),
 ])
-def test_update_platform(request, is_updated: bool):
-    response = create_platform(request)
+@patch('persistence.platform.PlatformRepository.get')
+def test_update_platform(request, is_updated: bool, get):
+    get.return_value = Platform(name='name_db', subtype='type').build_to_create()
+    response = update_platform(request)
     assert_true(response)
     assert_equal('error' not in response.keys(), is_updated)
     assert_equal('platformId' in response.keys(), is_updated)
     assert_equal('modificationDate' in response.keys(), is_updated)
+
+# TODO: adding test to repo.get with none values

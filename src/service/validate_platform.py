@@ -7,6 +7,7 @@ def _is_type_valid(value, value_type) -> bool:
 
 def validate_request(request: dict, request_type: str, valid_keys: list, valid_types: dict):
     # TODO: validate unique name.
+    # TODO: if update event check if exist object.
     logging.info(f'validating {request_type} request.')
     request_validated = {}
     if not request:
@@ -22,4 +23,7 @@ def validate_request(request: dict, request_type: str, valid_keys: list, valid_t
 
         if 'name' not in request or not request['name'] or len(request['name']) <= 0:
             request_validated['error'] = f'Name is a required parameter.'
+        if 'update' == request_type:
+            if 'platformId' not in request or not request['platformId'] or len(request['platformId']) <= 0:
+                request_validated['error'] = f'PlatformId is a required parameter.'
     return request_validated

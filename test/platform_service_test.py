@@ -30,7 +30,10 @@ from service.platform_service import create_platform, update_platform
     ({}, False),
     ([], False),
 ])
-def test_create_platform(request, is_created: bool):
+@patch('boto3.resource')
+@patch('persistence.platform.PlatformRepository')
+def test_create_platform(request, is_created: bool, boto, repository):
+    repository.search.return_value = []
     response = create_platform(request)
     assert_true(response)
     assert_equal('error' not in response.keys(), is_created)
@@ -63,9 +66,11 @@ def test_create_platform(request, is_created: bool):
     ({}, False),
     ([], False),
 ])
-@patch('persistence.platform.PlatformRepository.get')
-def test_update_platform(request, is_updated: bool, get):
-    get.return_value = Platform(name='name_db', subtype='type').build_to_create()
+@patch('boto3.resource')
+@patch('persistence.platform.PlatformRepository')
+def test_update_platform(request, is_updated: bool, boto, repository):
+    repository.search.return_value = []
+    repository.get.return_value = Platform(name='name_db', subtype='type').build_to_create()
     response = update_platform(request)
     assert_true(response)
     assert_equal('error' not in response.keys(), is_updated)

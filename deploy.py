@@ -1,10 +1,10 @@
-import os
 import argparse
+import os
 
 APP_VERSION = '1.0.0'
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-t', '--type', required=False, help='all, ddb', default='app')
+parser.add_argument('-t', '--type', required=False, help='app, ddb', default='app')
 args = parser.parse_args()
 
 lines = []

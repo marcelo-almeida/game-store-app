@@ -1,3 +1,5 @@
+import logging
+
 from persistence.platform import Platform, PlatformRepository
 from persistence.platform import VALID_CREATE_KEYS, VALID_CREATE_TYPES, VALID_UPDATE_KEYS, VALID_UPDATE_TYPES
 from service.validate_platform import validate_request
@@ -13,6 +15,7 @@ def create_platform(request: dict) -> dict:
                             subtype=request.get('subtype')).build_to_create().to_dict()
         repository = PlatformRepository()
         repository.save(platform=platform)
+        logging.info('platform created with success.')
         return platform
     else:
         return validator
@@ -31,6 +34,7 @@ def update_platform(request: dict) -> dict:
                             platform_id=platform_db.platform_id,
                             creation_date=platform_db.creation_date).build_to_update().to_dict()
         repository.save(platform=platform)
+        logging.info('platform updated with success.')
         return platform
     else:
         return validator

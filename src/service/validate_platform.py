@@ -30,7 +30,7 @@ def validate_request(request: dict, request_type: str, valid_keys: list, valid_t
                 if 'platformId' not in request or not request['platformId'] or len(request['platformId']) <= 0:
                     request_validated['error'] = f'PlatformId is a required parameter.'
 
-                if len(platforms) > 0 and platforms[0]['platformId'] != request['platformId']:
+                if len(platforms) > 0 and platforms[0].platform_id != request['platformId']:
                     request_validated['error'] = f'The given name is being used.'
                 if not repository.get(platform_id=request['platformId']):
                     # TODO: may create a new status code for this one.

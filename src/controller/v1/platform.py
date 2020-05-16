@@ -1,8 +1,8 @@
 import logging
 
-from flask import make_response, abort
+from flask import make_response
 
-from service.platform_service import create_platform, update_platform
+from service.platform_service import create_platform, update_platform, get_platform_by_id
 
 
 def search():
@@ -15,7 +15,8 @@ def post(body: dict):
 
 
 def get(platform_id: str):
-    return 'get platform Connexion! {}'.format(platform_id)
+    logging.info(f'Getting platform. PlatformId: {platform_id}')
+    return _create_response(get_platform_by_id(platform_id=platform_id))
 
 
 def put(platform_id: str, body: dict):
@@ -29,7 +30,4 @@ def delete(platform_id: str):
 
 
 def _create_response(response: dict, success_status: int = 200):
-    if 'error' in response:
-        abort(400, response['error'])
-    else:
-        return make_response(response, success_status)
+    return make_response(response, success_status)

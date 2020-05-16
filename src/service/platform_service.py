@@ -13,7 +13,7 @@ def create_platform(request: dict) -> dict:
                      valid_types=VALID_CREATE_TYPES)
 
     platform = Platform(name=request.get('name'),
-                        subtype=request.get('subtype')).build_to_create().to_dict()
+                        info=request.get('info')).build_to_create().to_dict()
     repository = PlatformRepository()
     repository.save(platform=platform)
     logging.info('platform created with success.')
@@ -29,7 +29,7 @@ def update_platform(request: dict) -> dict:
     repository = PlatformRepository()
     platform_db = repository.get(platform_id=request['platformId'])
     platform = Platform(name=request.get('name'),
-                        subtype=request.get('subtype'),
+                        info=request.get('info'),
                         platform_id=platform_db.platform_id,
                         creation_date=platform_db.creation_date).build_to_update().to_dict()
     repository.save(platform=platform)

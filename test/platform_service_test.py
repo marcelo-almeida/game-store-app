@@ -14,9 +14,9 @@ from service.platform_service import create_platform, update_platform
     ({'name': 'ps4'}, True),
     ({'name': 'xbox360'}, True),
     ({'name': '测试'}, True),
-    ({'name': 'windows', 'subtype': '10'}, True),
-    ({'name': 'windows', 'subtype': '10 pro'}, True),
-    ({'name': '测试', 'subtype': '10 测试'}, True),
+    ({'name': 'windows', 'info': '10'}, True),
+    ({'name': 'windows', 'info': '10 pro'}, True),
+    ({'name': '测试', 'info': '10 测试'}, True),
 ])
 @patch('boto3.resource')
 @patch('persistence.platform.PlatformRepository')
@@ -37,10 +37,10 @@ def test_create_platform_with_success(request, is_created: bool, boto, repositor
     ({'name': ''}, False),
     ({'name': None}, False),
     ({'named': 'windows'}, False),
-    ({'named': 'windows', 'subtype': '10'}, False),
-    ({'name': 'windows', 'subtypes': '10'}, False),
-    ({'name': 'windows', 'subtypes': '10'}, False),
-    ({'name': '测试', 'subtypes': '测试'}, False),
+    ({'named': 'windows', 'info': '10'}, False),
+    ({'name': 'windows', 'infos': '10'}, False),
+    ({'name': 'windows', 'infos': '10'}, False),
+    ({'name': '测试', 'infos': '测试'}, False),
     ({'': 'windows'}, False),
     ({}, False),
     ([], False),
@@ -57,15 +57,15 @@ def test_create_platform_with_fail(request, is_created: bool, boto, repository):
     ({'platformId': '123-123', 'name': 'ps4'}, True),
     ({'platformId': '123-123', 'name': 'xbox360'}, True),
     ({'platformId': '123-123', 'name': '测试'}, True),
-    ({'platformId': '123-123', 'name': 'windows', 'subtype': '10'}, True),
-    ({'platformId': '123-123', 'name': 'windows', 'subtype': '10 pro'}, True),
-    ({'platformId': '123-123', 'name': '测试', 'subtype': '10 测试'}, True),
+    ({'platformId': '123-123', 'name': 'windows', 'info': '10'}, True),
+    ({'platformId': '123-123', 'name': 'windows', 'info': '10 pro'}, True),
+    ({'platformId': '123-123', 'name': '测试', 'info': '10 测试'}, True),
 ])
 @patch('boto3.resource')
 @patch('persistence.platform.PlatformRepository')
 def test_update_platform_with_success(request, is_updated: bool, boto, repository):
     repository.search.return_value = []
-    repository.get.return_value = Platform(name='name_db', subtype='type').build_to_create()
+    repository.get.return_value = Platform(name='name_db', info='type').build_to_create()
     response = update_platform(request)
     assert_true(response)
     assert_equal('error' not in response.keys(), is_updated)
@@ -81,10 +81,10 @@ def test_update_platform_with_success(request, is_updated: bool, boto, repositor
     ({'platformId': '123-123', 'name': ''}, False),
     ({'platformId': '123-123', 'name': None}, False),
     ({'platformId': '123-123', 'named': 'windows'}, False),
-    ({'platformId': '123-123', 'named': 'windows', 'subtype': '10'}, False),
-    ({'platformId': '123-123', 'name': 'windows', 'subtypes': '10'}, False),
-    ({'platformId': '123-123', 'name': 'windows', 'subtypes': '10'}, False),
-    ({'platformId': '123-123', 'name': '测试', 'subtypes': '测试'}, False),
+    ({'platformId': '123-123', 'named': 'windows', 'info': '10'}, False),
+    ({'platformId': '123-123', 'name': 'windows', 'infos': '10'}, False),
+    ({'platformId': '123-123', 'name': 'windows', 'infos': '10'}, False),
+    ({'platformId': '123-123', 'name': '测试', 'infos': '测试'}, False),
     ({'platformId': '123-123', '': 'windows'}, False),
     ({'platformIds': '123-123', 'name': 'windows'}, False),
     ({'platformIds': '123-123', '': 'windows'}, False),
@@ -98,5 +98,5 @@ def test_update_platform_with_success(request, is_updated: bool, boto, repositor
 @raises(HTTPException)
 def test_update_platform_with_fail(request, is_updated: bool, boto, repository):
     repository.search.return_value = []
-    repository.get.return_value = Platform(name='name_db', subtype='type').build_to_create()
+    repository.get.return_value = Platform(name='name_db', info='type').build_to_create()
     update_platform(request)

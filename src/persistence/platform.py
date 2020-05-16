@@ -5,19 +5,19 @@ from boto3.dynamodb.conditions import Attr
 
 from persistence.base_repository import BaseRepository
 
-VALID_CREATE_KEYS = ['name', 'subtype']
-VALID_CREATE_TYPES = {'name': str, 'subtype': str}
+VALID_CREATE_KEYS = ['name', 'info']
+VALID_CREATE_TYPES = {'name': str, 'info': str}
 
-VALID_UPDATE_KEYS = ['name', 'platformId', 'subtype']
-VALID_UPDATE_TYPES = {'name': str, 'platformId': str, 'subtype': str}
+VALID_UPDATE_KEYS = ['name', 'platformId', 'info']
+VALID_UPDATE_TYPES = {'name': str, 'platformId': str, 'info': str}
 
 
 class Platform:
 
-    def __init__(self, name: str, subtype: str = None, platform_id: str = None, creation_date: int = None,
+    def __init__(self, name: str, info: str = None, platform_id: str = None, creation_date: int = None,
                  modification_date: int = None):
         self.name = name
-        self.subtype = subtype
+        self.info = info
         self.platform_id = platform_id
         self.creation_date = creation_date
         self.modification_date = modification_date
@@ -51,7 +51,7 @@ class PlatformRepository(BaseRepository):
     @staticmethod
     def _build_platform(item: dict) -> Platform:
         return Platform(name=item.get('name'),
-                        subtype=item.get('subtype'),
+                        info=item.get('info'),
                         platform_id=item.get('platformId'),
                         creation_date=item.get('creationDate'),
                         modification_date=item.get('modificationDate'))
@@ -77,17 +77,11 @@ class PlatformRepository(BaseRepository):
             }
         )
 
-    def search(self, name: str = None, sub_type: str = None, validate: bool = False) -> list:
+    def search(self, name: str = None, validate: bool = False) -> list:
         if validate and name:
             response = self._validate_name(name=name)
-        elif validate and sub_type:
-            response = self._validate_sub_type(sub_type=sub_type)
-        elif name and sub_type:
-            response = self._search_by_name_and_sub_type(name=name, sub_type=sub_type)
         elif name:
             response = self._search_by_name(name=name)
-        elif sub_type:
-            response = self._search_by_sub_type(sub_type=sub_type)
         else:
             response = self.table.scan()
         items = []
@@ -100,22 +94,7 @@ class PlatformRepository(BaseRepository):
             FilterExpression=Attr('name').eq(name)
         )
 
-    def _validate_sub_type(self, sub_type: str) -> list:
-        return self.table.scan(
-            FilterExpression=Attr('subtype').eq(sub_type)
-        )
-
     def _search_by_name(self, name: str) -> list:
         return self.table.scan(
             FilterExpression=Attr('name').contains(name)
-        )
-
-    def _search_by_sub_type(self, sub_type: str) -> list:
-        return self.table.scan(
-            FilterExpression=Attr('subtype').contains(sub_type)
-        )
-
-    def _search_by_name_and_sub_type(self, name: str, sub_type: str) -> list:
-        return self.table.scan(
-            FilterExpression=Attr('name').contains(name) & Attr('subtype').contains(sub_type)
         )

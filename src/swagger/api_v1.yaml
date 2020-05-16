@@ -256,7 +256,7 @@ definitions:
     properties:
       name:
         type: "string"
-      subType:
+      info:
         type: "string"
   platform_response:
     type: "object"
@@ -272,5 +272,5 @@ definitions:
       modificationDate:
         type: "integer"
         format: "timestamp"
-      subType:
+      info:
         type: "string"

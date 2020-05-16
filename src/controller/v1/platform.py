@@ -2,11 +2,12 @@ import logging
 
 from flask import make_response
 
-from service.platform_service import create_platform, update_platform, get_platform_by_id
+from service.platform_service import create_platform, update_platform, get_platform_by_id, search_platforms
 
 
-def search():
-    return 'search platform Connexion!'
+def search(name: str = None):
+    logging.info(f'Searching platforms. Param Name: {name}')
+    return _create_response(search_platforms(name=name))
 
 
 def post(body: dict):

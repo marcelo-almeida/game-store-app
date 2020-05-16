@@ -37,7 +37,7 @@ def update_platform(request: dict) -> dict:
     return platform
 
 
-def get_platform_by_id(platform_id: str):
+def get_platform_by_id(platform_id: str) -> dict:
     repository = PlatformRepository()
     platform = repository.get(platform_id=platform_id)
     if platform:
@@ -45,3 +45,11 @@ def get_platform_by_id(platform_id: str):
         return platform.to_dict()
     else:
         raise ApiError(error_code=404, error_message='platform not found')
+
+
+def search_platforms(name: str) -> dict:
+    repository = PlatformRepository()
+    # TODO: implement page.
+    return {
+        'data': [platform.to_dict() for platform in repository.search(name=name)]
+    }

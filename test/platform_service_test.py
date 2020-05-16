@@ -1,11 +1,14 @@
 from unittest.mock import patch
 
-from nose.tools import assert_equal, assert_true
+from nose.tools import assert_equal, assert_true, raises
 from parameterized import parameterized
+from werkzeug.exceptions import HTTPException
 
 from persistence.platform import Platform
 from service.platform_service import create_platform, update_platform
 
+
+# TODO: adding test to repo.get with none values
 
 @parameterized([
     ({'name': 'ps4'}, True),
@@ -14,6 +17,18 @@ from service.platform_service import create_platform, update_platform
     ({'name': 'windows', 'subtype': '10'}, True),
     ({'name': 'windows', 'subtype': '10 pro'}, True),
     ({'name': '测试', 'subtype': '10 测试'}, True),
+])
+@patch('boto3.resource')
+@patch('persistence.platform.PlatformRepository')
+def test_create_platform_with_success(request, is_created: bool, boto, repository):
+    repository.search.return_value = []
+    response = create_platform(request)
+    assert_true(response)
+    assert_equal('error' not in response.keys(), is_created)
+    assert_equal('platformId' in response.keys(), is_created)
+
+
+@parameterized([
     ({'name': 'xbox360', 'platformId': '123-123'}, False),
     ({'name': 'xbox360', 'platformId': ''}, False),
     ({'name': 'xbox360', 'platformId': None}, False),
@@ -32,12 +47,10 @@ from service.platform_service import create_platform, update_platform
 ])
 @patch('boto3.resource')
 @patch('persistence.platform.PlatformRepository')
-def test_create_platform(request, is_created: bool, boto, repository):
+@raises(HTTPException)
+def test_create_platform_with_fail(request, is_created: bool, boto, repository):
     repository.search.return_value = []
-    response = create_platform(request)
-    assert_true(response)
-    assert_equal('error' not in response.keys(), is_created)
-    assert_equal('platformId' in response.keys(), is_created)
+    create_platform(request)
 
 
 @parameterized([
@@ -47,6 +60,20 @@ def test_create_platform(request, is_created: bool, boto, repository):
     ({'platformId': '123-123', 'name': 'windows', 'subtype': '10'}, True),
     ({'platformId': '123-123', 'name': 'windows', 'subtype': '10 pro'}, True),
     ({'platformId': '123-123', 'name': '测试', 'subtype': '10 测试'}, True),
+])
+@patch('boto3.resource')
+@patch('persistence.platform.PlatformRepository')
+def test_update_platform_with_success(request, is_updated: bool, boto, repository):
+    repository.search.return_value = []
+    repository.get.return_value = Platform(name='name_db', subtype='type').build_to_create()
+    response = update_platform(request)
+    assert_true(response)
+    assert_equal('error' not in response.keys(), is_updated)
+    assert_equal('platformId' in response.keys(), is_updated)
+    assert_equal('modificationDate' in response.keys(), is_updated)
+
+
+@parameterized([
     ({'platformId': '', 'name': 'xbox360'}, False),
     ({'platformId': None, 'name': 'xbox360'}, False),
     ({'platformId': '123-123', 'name': 'xbox360', 'modificationDate': 123456}, False),
@@ -68,13 +95,8 @@ def test_create_platform(request, is_created: bool, boto, repository):
 ])
 @patch('boto3.resource')
 @patch('persistence.platform.PlatformRepository')
-def test_update_platform(request, is_updated: bool, boto, repository):
+@raises(HTTPException)
+def test_update_platform_with_fail(request, is_updated: bool, boto, repository):
     repository.search.return_value = []
     repository.get.return_value = Platform(name='name_db', subtype='type').build_to_create()
-    response = update_platform(request)
-    assert_true(response)
-    assert_equal('error' not in response.keys(), is_updated)
-    assert_equal('platformId' in response.keys(), is_updated)
-    assert_equal('modificationDate' in response.keys(), is_updated)
-
-# TODO: adding test to repo.get with none values
+    update_platform(request)

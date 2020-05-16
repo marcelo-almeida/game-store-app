@@ -37,6 +37,15 @@ def update_platform(request: dict) -> dict:
     return platform
 
 
+def delete_platform(platform_id: str):
+    repository = PlatformRepository()
+    if repository.get(platform_id=platform_id):
+        repository.delete(platform_id=platform_id)
+        logging.info('platform deleted with success.')
+    else:
+        raise ApiError(error_code=404, error_message='platform not found')
+
+
 def get_platform_by_id(platform_id: str) -> dict:
     repository = PlatformRepository()
     platform = repository.get(platform_id=platform_id)
@@ -50,6 +59,8 @@ def get_platform_by_id(platform_id: str) -> dict:
 def search_platforms(name: str) -> dict:
     repository = PlatformRepository()
     # TODO: implement page.
+    platforms = repository.search(name=name)
+    logging.info('platforms retrieved with success.')
     return {
-        'data': [platform.to_dict() for platform in repository.search(name=name)]
+        'data': [platform.to_dict() for platform in platforms]
     }

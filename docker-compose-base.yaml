@@ -2,5 +2,11 @@ version: '3.4'
 services:
   app:
     image: game-store:{version}
+    container_name: game-store
     ports:
       - 8080:8080
+  dynamo:
+    image: instructure/dynamo-local-admin
+    container_name: ddb
+    ports:
+      - 8000:8000

@@ -2,24 +2,9 @@ import logging
 
 from flask import make_response
 
+from configuration.decorators import handler_exception
 from service.platform_service import create_platform, update_platform, delete_platform, get_platform_by_id, \
     search_platforms
-from configuration.custom_exception import ApiError
-from werkzeug.exceptions import HTTPException
-
-
-def handler_exception(func):
-    def wrapper(*args, **kwargs):
-        try:
-            response = func(*args, **kwargs)
-        except HTTPException as http_exception:
-            raise http_exception
-        except Exception as ex:
-            logging.error(ex)
-            raise ApiError()
-        return response
-
-    return wrapper
 
 
 @handler_exception

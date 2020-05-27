@@ -3,7 +3,7 @@ import logging
 from configuration.custom_exception import ApiError
 from persistence.platform import Platform, PlatformRepository
 from persistence.platform import VALID_CREATE_KEYS, VALID_CREATE_TYPES, VALID_UPDATE_KEYS, VALID_UPDATE_TYPES
-from service.validate_platform import validate_request
+from platform.validate_platform import validate_request
 
 
 def create_platform(request: dict) -> dict:

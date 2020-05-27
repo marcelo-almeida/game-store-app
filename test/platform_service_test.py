@@ -5,7 +5,7 @@ from parameterized import parameterized
 from werkzeug.exceptions import HTTPException
 
 from persistence.platform import Platform
-from service.platform_service import create_platform, update_platform
+from platform.platform_service import create_platform, update_platform
 
 
 # TODO: adding test to repo.get with none values

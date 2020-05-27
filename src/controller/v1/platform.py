@@ -3,7 +3,7 @@ import logging
 from flask import make_response
 
 from configuration.decorators import handler_exception
-from service.platform_service import create_platform, update_platform, delete_platform, get_platform_by_id, \
+from platform.platform_service import create_platform, update_platform, delete_platform, get_platform_by_id, \
     search_platforms
 
 

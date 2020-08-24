@@ -11,7 +11,7 @@ def create_platform(request: dict) -> dict:
     platform = Platform(name=request.get('name'),
                         info=request.get('info')).build_to_create().to_dict()
     repository.save(platform=platform)
-    logging.info('platforms created with success.')
+    logging.info('platform created with success.')
     return platform
 
 
@@ -23,31 +23,31 @@ def update_platform(request: dict) -> dict:
                         platform_id=platform_db.platform_id,
                         creation_date=platform_db.creation_date).build_to_update().to_dict()
     repository.save(platform=platform)
-    logging.info('platforms updated with success.')
+    logging.info('platform updated with success.')
     return platform
 
 
 def delete_platform(platform_id: str):
     if repository.get(platform_id=platform_id):
         repository.delete(platform_id=platform_id)
-        logging.info('platforms deleted with success.')
+        logging.info('platform deleted with success.')
     else:
-        raise ApiError(error_code=404, error_message='platforms not found')
+        raise ApiError(error_code=404, error_message='platform not found')
 
 
 def get_platform_by_id(platform_id: str) -> dict:
     platform = repository.get(platform_id=platform_id)
     if platform:
-        logging.info('platforms retrieved with success.')
+        logging.info('platform retrieved with success.')
         return platform.to_dict()
     else:
-        raise ApiError(error_code=404, error_message='platforms not found')
+        raise ApiError(error_code=404, error_message='platform not found')
 
 
 def search_platforms(name: str) -> dict:
     # TODO: implement page.
     platforms = repository.search(name=name)
-    logging.info('platforms retrieved with success.')
+    logging.info('platform retrieved with success.')
     return {
         'data': [platform.to_dict() for platform in platforms]
     }

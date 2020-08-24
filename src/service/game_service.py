@@ -62,7 +62,7 @@ def search_games(name: str) -> dict:
 
 
 def validate_game(request: dict):
-    # TODO: validate platforms if exists.
+    # TODO: validate platform if exists.
     games = repository.search(name=request['name'], validate=True)
     if request.get('gameId'):
         if len(games) > 0 and games[0].game_id != request['gameId']:

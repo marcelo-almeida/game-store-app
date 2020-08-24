@@ -15,8 +15,11 @@ PLATFORM_UPDATE_SCHEMA = {
 GAME_CREATION_SCHEMA = {
     'account': And(str, lambda s: len(s) > 0, error='Invalid value for parameter account'),
     'name': And(str, lambda s: len(s) > 0, error='Invalid value for parameter name'),
+    Optional('description'): And(str, lambda s: len(s) > 0, error='Invalid value for parameter description'),
     'releaseDate': And(str, lambda s: len(s) > 0, error='Invalid value for parameter releaseDate'),
     'price': And(float, lambda f: f > 0, error='Invalid value for parameter price'),
+    'availablePlatforms': And([{'id': And(str, lambda s: len(s) > 0)}], lambda l: len(l) > 0,
+                              error='Invalid value for parameter availablePlatforms'),
 }
 
 GAME_UPDATE_SCHEMA = {

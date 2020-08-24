@@ -5,14 +5,6 @@ from boto3.dynamodb.conditions import Attr
 
 from configuration.base_repository import BaseRepository
 
-VALID_CREATE_KEYS = ['account', 'name', 'description', 'releaseDate', 'price', 'availablePlatforms']
-VALID_CREATE_TYPES = {'account': str, 'name': str, 'description': str, 'releaseDate': str, 'price': float,
-                      'availablePlatforms': list}
-
-VALID_UPDATE_KEYS = ['account', 'gameId' 'name', 'description', 'releaseDate', 'price', 'availablePlatforms']
-VALID_UPDATE_TYPES = {'account': str, 'gameId': str, 'name': str, 'description': str, 'releaseDate': str,
-                      'price': float, 'availablePlatforms': list}
-
 
 class Game:
 

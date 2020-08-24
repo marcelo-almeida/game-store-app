@@ -47,7 +47,7 @@ def get_platform_by_id(platform_id: str) -> dict:
 def search_platforms(name: str) -> dict:
     # TODO: implement page.
     platforms = repository.search(name=name)
-    logging.info('platform retrieved with success.')
+    logging.info('platforms retrieved with success.')
     return {
         'data': [platform.to_dict() for platform in platforms]
     }

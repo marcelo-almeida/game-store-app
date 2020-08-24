@@ -3,28 +3,27 @@ from datetime import datetime
 
 from boto3.dynamodb.conditions import Attr
 
-from persistence.base_repository import BaseRepository
-
-VALID_CREATE_KEYS = ['name', 'info']
-VALID_CREATE_TYPES = {'name': str, 'info': str}
-
-VALID_UPDATE_KEYS = ['name', 'platformId', 'info']
-VALID_UPDATE_TYPES = {'name': str, 'platformId': str, 'info': str}
+from configuration.base_repository import BaseRepository
 
 
-class Platform:
+class Game:
 
-    def __init__(self, name: str, info: str = None, platform_id: str = None, creation_date: int = None,
-                 modification_date: int = None):
+    def __init__(self, account: str, name: str, release_date: str, price: float,
+                 available_platforms: list = None, description: str = None, game_id: str = None,
+                 creation_date: int = None, modification_date: int = None):
+        self.account = account
         self.name = name
-        self.info = info
-        self.platform_id = platform_id
+        self.release_date = release_date
+        self.price = price
+        self.available_platforms = available_platforms
+        self.description = description
+        self.game_id = game_id
         self.creation_date = creation_date
         self.modification_date = modification_date
 
     def build_to_create(self):
         now = datetime.utcnow()
-        self.platform_id = str(uuid.uuid4())
+        self.game_id = str(uuid.uuid4())
         self.modification_date = int(datetime.timestamp(now))
         self.creation_date = int(datetime.timestamp(now))
         return self
@@ -43,37 +42,43 @@ class Platform:
         return {self._to_camel_case(key): value for key, value in self.__dict__.items() if value}
 
 
-class PlatformRepository(BaseRepository):
+class GameRepository(BaseRepository):
 
     def __init__(self):
-        super().__init__(table_name='store-platform')
+        super().__init__(table_name='store-game')
 
     @staticmethod
-    def _build_platform(item: dict) -> Platform:
-        return Platform(name=item.get('name'),
-                        info=item.get('info'),
-                        platform_id=item.get('platformId'),
-                        creation_date=item.get('creationDate'),
-                        modification_date=item.get('modificationDate'))
+    def _build_game(item: dict) -> Game:
+        return Game(account=item.get('account'),
+                    name=item.get('name'),
+                    release_date=item.get('releaseDate'),
+                    price=item.get('price'),
+                    available_platforms=item.get('availablePlatforms'),
+                    description=item.get('description'),
+                    game_id=item.get('gameId'),
+                    creation_date=item.get('creationDate'),
+                    modification_date=item.get('modificationDate'))
 
-    def save(self, platform: dict):
-        self.table.put_item(Item=platform)
+    def save(self, game: dict):
+        self.table.put_item(Item=game)
 
-    def get(self, platform_id: str):
+    def get(self, account: str, game_id: str):
         response = self.table.get_item(
             Key={
-                'platformId': platform_id
+                'account': account,
+                'gameId': game_id
             }
         )
         if response.get('Item'):
-            return self._build_platform(item=response.get('Item'))
+            return self._build_game(item=response.get('Item'))
         else:
             return None
 
-    def delete(self, platform_id: str):
+    def delete(self, account: str, game_id: str):
         self.table.delete_item(
             Key={
-                'platformId': platform_id
+                'account': account,
+                'gameId': game_id
             }
         )
 
@@ -86,7 +91,7 @@ class PlatformRepository(BaseRepository):
             response = self.table.scan()
         items = []
         for item in response.get('Items'):
-            items.append(self._build_platform(item=item))
+            items.append(self._build_game(item=item))
         return items
 
     def _validate_name(self, name: str) -> list:

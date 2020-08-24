@@ -1,33 +1,23 @@
 import logging
 
 from configuration.custom_exception import ApiError
-from persistence.platform import Platform, PlatformRepository
-from persistence.platform import VALID_CREATE_KEYS, VALID_CREATE_TYPES, VALID_UPDATE_KEYS, VALID_UPDATE_TYPES
-from service.validate_platform import validate_request
+from service.platform import Platform, PlatformRepository
+
+repository = PlatformRepository()
 
 
 def create_platform(request: dict) -> dict:
-    validate_request(request=request,
-                     request_type='create',
-                     valid_keys=VALID_CREATE_KEYS,
-                     valid_types=VALID_CREATE_TYPES)
-
+    validate_platform(request=request)
     platform = Platform(name=request.get('name'),
                         info=request.get('info')).build_to_create().to_dict()
-    repository = PlatformRepository()
     repository.save(platform=platform)
     logging.info('platform created with success.')
     return platform
 
 
 def update_platform(request: dict) -> dict:
-    validate_request(request=request,
-                     request_type='update',
-                     valid_keys=VALID_UPDATE_KEYS,
-                     valid_types=VALID_UPDATE_TYPES)
-
-    repository = PlatformRepository()
-    platform_db = repository.get(platform_id=request['platformId'])
+    validate_platform(request=request)
+    platform_db = repository.get(platform_id=request.get('platformId'))
     platform = Platform(name=request.get('name'),
                         info=request.get('info'),
                         platform_id=platform_db.platform_id,
@@ -38,7 +28,6 @@ def update_platform(request: dict) -> dict:
 
 
 def delete_platform(platform_id: str):
-    repository = PlatformRepository()
     if repository.get(platform_id=platform_id):
         repository.delete(platform_id=platform_id)
         logging.info('platform deleted with success.')
@@ -47,7 +36,6 @@ def delete_platform(platform_id: str):
 
 
 def get_platform_by_id(platform_id: str) -> dict:
-    repository = PlatformRepository()
     platform = repository.get(platform_id=platform_id)
     if platform:
         logging.info('platform retrieved with success.')
@@ -57,10 +45,20 @@ def get_platform_by_id(platform_id: str) -> dict:
 
 
 def search_platforms(name: str) -> dict:
-    repository = PlatformRepository()
     # TODO: implement page.
     platforms = repository.search(name=name)
     logging.info('platforms retrieved with success.')
     return {
         'data': [platform.to_dict() for platform in platforms]
     }
+
+
+def validate_platform(request: dict):
+    platforms = repository.search(name=request['name'], validate=True)
+    if request.get('platformId') and len(platforms) > 0 and platforms[0].platform_id != request['platformId']:
+        raise ApiError(error_code=409, error_message=f'The given name is being used.')
+    if not repository.get(platform_id=request['platformId']):
+        raise ApiError(error_code=404, error_message=f'Platform does not exists to be updated.')
+    else:
+        if len(platforms) > 0:
+            raise ApiError(error_code=409, error_message=f'The given name is being used.')

@@ -2,24 +2,12 @@ import logging
 
 from flask import make_response
 
+from configuration.decorators import handler_exception
 from service.platform_service import create_platform, update_platform, delete_platform, get_platform_by_id, \
     search_platforms
-from configuration.custom_exception import ApiError
-from werkzeug.exceptions import HTTPException
+from service.schema_validator import PlatformSchemaValidator
 
-
-def handler_exception(func):
-    def wrapper(*args, **kwargs):
-        try:
-            response = func(*args, **kwargs)
-        except HTTPException as http_exception:
-            raise http_exception
-        except Exception as ex:
-            logging.error(ex)
-            raise ApiError()
-        return response
-
-    return wrapper
+schema_validator = PlatformSchemaValidator()
 
 
 @handler_exception
@@ -31,6 +19,7 @@ def search(name: str = None):
 @handler_exception
 def post(body: dict):
     logging.info('Creating platform.')
+    schema_validator.validate_creation_request(request=body)
     return _create_response(response=create_platform(request=body), success_status=201)
 
 
@@ -44,6 +33,7 @@ def get(platform_id: str):
 def put(platform_id: str, body: dict):
     logging.info(f'Updating platform. PlatformId: {platform_id}')
     body['platformId'] = platform_id
+    schema_validator.validate_update_request(request=body)
     return _create_response(update_platform(request=body))
 
 

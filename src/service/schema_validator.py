@@ -1,4 +1,5 @@
 from schema import Schema, SchemaError, And, Optional
+
 from configuration.custom_exception import ApiError
 
 PLATFORM_CREATION_SCHEMA = {
@@ -9,6 +10,18 @@ PLATFORM_CREATION_SCHEMA = {
 PLATFORM_UPDATE_SCHEMA = {
     'platformId': And(str, lambda s: len(s) > 0, error='Invalid value for parameter platformId'),
     **PLATFORM_CREATION_SCHEMA
+}
+
+GAME_CREATION_SCHEMA = {
+    'account': And(str, lambda s: len(s) > 0, error='Invalid value for parameter account'),
+    'name': And(str, lambda s: len(s) > 0, error='Invalid value for parameter name'),
+    'releaseDate': And(str, lambda s: len(s) > 0, error='Invalid value for parameter releaseDate'),
+    'price': And(float, lambda f: f > 0, error='Invalid value for parameter price'),
+}
+
+GAME_UPDATE_SCHEMA = {
+    'gameId': And(str, lambda s: len(s) > 0, error='Invalid value for parameter gameId'),
+    **GAME_CREATION_SCHEMA
 }
 
 
@@ -27,3 +40,11 @@ class PlatformSchemaValidator(SchemaValidator):
 
     def validate_update_request(self, request):
         self.validate_request(schema=PLATFORM_UPDATE_SCHEMA, data=request)
+
+
+class GameSchemaValidator(SchemaValidator):
+    def validate_creation_request(self, request):
+        self.validate_request(schema=GAME_CREATION_SCHEMA, data=request)
+
+    def validate_update_request(self, request):
+        self.validate_request(schema=GAME_UPDATE_SCHEMA, data=request)

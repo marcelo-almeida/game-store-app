@@ -57,6 +57,8 @@ def validate_platform(request: dict):
     platforms = repository.search(name=request['name'], validate=True)
     if request.get('platformId') and len(platforms) > 0 and platforms[0].platform_id != request['platformId']:
         raise ApiError(error_code=409, error_message=f'The given name is being used.')
+    if not repository.get(platform_id=request['platformId']):
+        raise ApiError(error_code=404, error_message=f'Platform does not exists to be updated.')
     else:
         if len(platforms) > 0:
             raise ApiError(error_code=409, error_message=f'The given name is being used.')

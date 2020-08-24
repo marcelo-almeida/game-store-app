@@ -4,8 +4,8 @@ from nose.tools import assert_equal, assert_true, raises
 from parameterized import parameterized
 from werkzeug.exceptions import HTTPException
 
-from persistence.platform import Platform
-from platform.platform_service import create_platform, update_platform
+from service.platform import Platform
+from service.platform.platform_service import create_platform, update_platform
 
 
 # TODO: adding test to repo.get with none values

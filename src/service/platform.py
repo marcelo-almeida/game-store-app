@@ -3,7 +3,7 @@ from datetime import datetime
 
 from boto3.dynamodb.conditions import Attr
 
-from persistence.base_repository import BaseRepository
+from configuration.base_repository import BaseRepository
 
 VALID_CREATE_KEYS = ['name', 'info']
 VALID_CREATE_TYPES = {'name': str, 'info': str}
@@ -46,7 +46,7 @@ class Platform:
 class PlatformRepository(BaseRepository):
 
     def __init__(self):
-        super().__init__(table_name='store-platform')
+        super().__init__(table_name='store-platforms')
 
     @staticmethod
     def _build_platform(item: dict) -> Platform:

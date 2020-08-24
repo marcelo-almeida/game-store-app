@@ -1,9 +1,9 @@
 import logging
 
 from configuration.custom_exception import ApiError
-from persistence.game import Game, GameRepository
-from persistence.game import VALID_CREATE_KEYS, VALID_CREATE_TYPES, VALID_UPDATE_KEYS, VALID_UPDATE_TYPES
-from game.validate_game import validate_request
+from service.game import Game, GameRepository
+from service.game import VALID_CREATE_KEYS, VALID_CREATE_TYPES, VALID_UPDATE_KEYS, VALID_UPDATE_TYPES
+from service.game.validate_game import validate_request
 
 
 def create_game(request: dict) -> dict:

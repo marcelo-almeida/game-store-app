@@ -1,5 +1,5 @@
 import logging
-from persistence.game import GameRepository
+from service.game import GameRepository
 from configuration.custom_exception import ApiError
 
 

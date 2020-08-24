@@ -3,7 +3,7 @@ from datetime import datetime
 
 from boto3.dynamodb.conditions import Attr
 
-from persistence.base_repository import BaseRepository
+from configuration.base_repository import BaseRepository
 
 VALID_CREATE_KEYS = ['account', 'name', 'description', 'releaseDate', 'price', 'availablePlatforms']
 VALID_CREATE_TYPES = {'account': str, 'name': str, 'description': str, 'releaseDate': str, 'price': float,

@@ -5,12 +5,6 @@ from boto3.dynamodb.conditions import Attr
 
 from configuration.base_repository import BaseRepository
 
-VALID_CREATE_KEYS = ['name', 'info']
-VALID_CREATE_TYPES = {'name': str, 'info': str}
-
-VALID_UPDATE_KEYS = ['name', 'platformId', 'info']
-VALID_UPDATE_TYPES = {'name': str, 'platformId': str, 'info': str}
-
 
 class Platform:
 
@@ -46,7 +40,7 @@ class Platform:
 class PlatformRepository(BaseRepository):
 
     def __init__(self):
-        super().__init__(table_name='store-platforms')
+        super().__init__(table_name='store-platform')
 
     @staticmethod
     def _build_platform(item: dict) -> Platform:

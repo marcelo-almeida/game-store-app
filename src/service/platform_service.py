@@ -2,11 +2,14 @@ import logging
 
 from configuration.custom_exception import ApiError
 from service.platform import Platform, PlatformRepository
+from service.schema_validator import PlatformSchemaValidator
 
 repository = PlatformRepository()
+schema_validator = PlatformSchemaValidator()
 
 
 def create_platform(request: dict) -> dict:
+    schema_validator.validate_creation_request(request=request)
     validate_platform(request=request)
     platform = Platform(name=request.get('name'),
                         info=request.get('info')).build_to_create().to_dict()
@@ -16,6 +19,7 @@ def create_platform(request: dict) -> dict:
 
 
 def update_platform(request: dict) -> dict:
+    schema_validator.validate_update_request(request=request)
     validate_platform(request=request)
     platform_db = repository.get(platform_id=request.get('platformId'))
     platform = Platform(name=request.get('name'),
@@ -55,10 +59,11 @@ def search_platforms(name: str) -> dict:
 
 def validate_platform(request: dict):
     platforms = repository.search(name=request['name'], validate=True)
-    if request.get('platformId') and len(platforms) > 0 and platforms[0].platform_id != request['platformId']:
-        raise ApiError(error_code=409, error_message=f'The given name is being used.')
-    if not repository.get(platform_id=request['platformId']):
-        raise ApiError(error_code=404, error_message=f'Platform does not exists to be updated.')
+    if request.get('platformId'):
+        if len(platforms) > 0 and platforms[0].platform_id != request['platformId']:
+            raise ApiError(error_code=409, error_message=f'The given name is being used.')
+        if not repository.get(platform_id=request['platformId']):
+            raise ApiError(error_code=404, error_message=f'Platform does not exists to be updated.')
     else:
         if len(platforms) > 0:
             raise ApiError(error_code=409, error_message=f'The given name is being used.')

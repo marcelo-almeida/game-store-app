@@ -2,11 +2,14 @@ import logging
 
 from configuration.custom_exception import ApiError
 from service.platform import Platform, PlatformRepository
+from service.schema_validator import PlatformSchemaValidator
 
 repository = PlatformRepository()
+schema_validator = PlatformSchemaValidator()
 
 
 def create_platform(request: dict) -> dict:
+    schema_validator.validate_creation_request(request=request)
     validate_platform(request=request)
     platform = Platform(name=request.get('name'),
                         info=request.get('info')).build_to_create().to_dict()
@@ -16,6 +19,7 @@ def create_platform(request: dict) -> dict:
 
 
 def update_platform(request: dict) -> dict:
+    schema_validator.validate_update_request(request=request)
     validate_platform(request=request)
     platform_db = repository.get(platform_id=request.get('platformId'))
     platform = Platform(name=request.get('name'),

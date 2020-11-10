@@ -1,25 +1,36 @@
-from service.schema_validator import PlatformSchemaValidator
+import logging
 
-schema_validator = PlatformSchemaValidator()
+from flask import make_response
+
+from configuration.decorators import handler_exception
+from service.game_service import create_game
 
 
+@handler_exception
 def search():
     return 'search game Connexion!'
 
 
+@handler_exception
 def post(body: dict):
-    schema_validator.validate_creation_request(request=body)
-    return 'post game Connexion!'
+    logging.info('Creating game.')
+    return __create_response(response=create_game(request=body), success_status=201)
 
 
+@handler_exception
 def get(game_id: str):
     return 'get game Connexion! {}'.format(game_id)
 
 
+@handler_exception
 def put(game_id: str, body: dict):
-    schema_validator.validate_update_request(request=body)
     return 'put game Connexion! {}'.format(game_id)
 
 
+@handler_exception
 def delete(game_id: str):
     return 'delete game Connexion! {}'.format(game_id)
+
+
+def __create_response(response: dict, success_status: int = 200):
+    return make_response(response, success_status)

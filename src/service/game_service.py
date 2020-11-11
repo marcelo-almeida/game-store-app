@@ -70,19 +70,18 @@ def search_games(name: str) -> dict:
 def fill_platforms(platform_ids: list):
     platforms = []
     for platform in platform_ids:
-        platforms.append(platform_repository.get(platform_id=platform))
+        platforms.append(platform_repository.get(platform_id=platform).to_dict())
     return platforms
 
 
 def validate_platforms(platform_ids: list):
-    platforms_ddb = [item.get('platformId') for item in platform_repository.search()]
+    platforms_ddb = [item.platform_id for item in platform_repository.search()]
     if not set(platform_ids).issubset(set(platforms_ddb)):
         raise ApiError(error_code=404, error_message='One or more platforms are invalid.')
 
 
 def validate_game(request: dict):
-    # TODO: validate platform if exists.
-    games = repository.search(name=request['name'], validate=True)
+    games = repository.search(name=request['name'], account=request['account'], validate=True)
     if request.get('gameId'):
         if len(games) > 0 and games[0].game_id != request['gameId']:
             raise ApiError(error_code=409, error_message='The given name is being used.')
@@ -91,4 +90,4 @@ def validate_game(request: dict):
     else:
         if len(games) > 0:
             raise ApiError(error_code=409, error_message=f'The given name is being used.')
-    validate_platforms(platform_ids=[item.get('platformId') for item in request['availablePlatforms']])
+    validate_platforms(platform_ids=[item.get('id') for item in request['availablePlatforms']])

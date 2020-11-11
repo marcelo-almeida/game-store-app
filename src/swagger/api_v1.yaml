@@ -212,8 +212,7 @@ definitions:
         type: "string"
         format: "date"
       price:
-        type: "number"
-        format: "double"
+        type: "string"
       availablePlatforms:
         type: "array"
         items:
@@ -244,8 +243,7 @@ definitions:
         type: "integer"
         format: "timestamp"
       price:
-        type: "number"
-        format: "double"
+        type: "string"
       availablePlatforms:
         type: "array"
         items:

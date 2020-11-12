@@ -2,13 +2,14 @@ import uuid
 from datetime import datetime
 
 from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Key
 
 from configuration.base_repository import BaseRepository
 
 
 class Game:
 
-    def __init__(self, account: str, name: str, release_date: str, price: float,
+    def __init__(self, account: str, name: str, release_date: str, price: str,
                  available_platforms: list = None, description: str = None, game_id: str = None,
                  creation_date: int = None, modification_date: int = None):
         self.account = account
@@ -48,7 +49,7 @@ class GameRepository(BaseRepository):
         super().__init__(table_name='store-game')
 
     @staticmethod
-    def _build_game(item: dict) -> Game:
+    def __build_game(item: dict) -> Game:
         return Game(account=item.get('account'),
                     name=item.get('name'),
                     release_date=item.get('releaseDate'),
@@ -70,7 +71,7 @@ class GameRepository(BaseRepository):
             }
         )
         if response.get('Item'):
-            return self._build_game(item=response.get('Item'))
+            return self.__build_game(item=response.get('Item'))
         else:
             return None
 
@@ -82,24 +83,25 @@ class GameRepository(BaseRepository):
             }
         )
 
-    def search(self, name: str = None, validate: bool = False) -> list:
+    def search(self, name: str = None, validate: bool = False, account: str = None) -> list:
         if validate and name:
-            response = self._validate_name(name=name)
+            response = self.__validate_name(account=account, name=name)
         elif name:
-            response = self._search_by_name(name=name)
+            response = self.__search_by_name(name=name)
         else:
             response = self.table.scan()
         items = []
         for item in response.get('Items'):
-            items.append(self._build_game(item=item))
+            items.append(self.__build_game(item=item))
         return items
 
-    def _validate_name(self, name: str) -> list:
-        return self.table.scan(
+    def __validate_name(self, account: str, name: str) -> list:
+        return self.table.query(
+            KeyConditionExpression=Key('account').eq(account),
             FilterExpression=Attr('name').eq(name)
         )
 
-    def _search_by_name(self, name: str) -> list:
+    def __search_by_name(self, name: str) -> list:
         return self.table.scan(
             FilterExpression=Attr('name').contains(name)
         )

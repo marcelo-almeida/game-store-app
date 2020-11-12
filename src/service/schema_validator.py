@@ -17,7 +17,7 @@ GAME_CREATION_SCHEMA = {
     'name': And(str, lambda s: len(s) > 0, error='Invalid value for parameter name'),
     Optional('description'): And(str, lambda s: len(s) > 0, error='Invalid value for parameter description'),
     'releaseDate': And(str, lambda s: len(s) > 0, error='Invalid value for parameter releaseDate'),
-    'price': And(float, lambda f: f > 0, error='Invalid value for parameter price'),
+    'price': And(str, lambda f: len(f) > 0, error='Invalid value for parameter price'),
     'availablePlatforms': And([{'id': And(str, lambda s: len(s) > 0)}], lambda l: len(l) > 0,
                               error='Invalid value for parameter availablePlatforms'),
 }

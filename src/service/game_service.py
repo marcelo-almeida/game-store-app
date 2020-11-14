@@ -79,7 +79,7 @@ def fill_platforms(platform_ids: list):
 def validate_platforms(platform_ids: list):
     platforms_ddb = [item.platform_id for item in platform_repository.search()]
     if not set(platform_ids).issubset(set(platforms_ddb)):
-        raise ApiError(error_code=404, error_message='One or more platforms are invalid.')
+        raise ApiError(error_code=400, error_message='One or more platforms are invalid.')
 
 
 def validate_game(request: dict):

@@ -26,13 +26,15 @@ def create_game(request: dict) -> dict:
 
 
 def update_game(request: dict) -> dict:
+    schema_validator.validate_update_request(request=request)
     validate_game(request=request)
+    platforms = fill_platforms(platform_ids=[item.get('id') for item in request.get('availablePlatforms')])
     game_db = repository.get(account=request['account'], game_id=request['gameId'])
     game = Game(account=request.get('account'),
                 name=request.get('name'),
                 release_date=request.get('releaseDate'),
                 price=request.get('price'),
-                available_platforms=request.get('availablePlatforms'),
+                available_platforms=platforms,
                 description=request.get('description'),
                 game_id=game_db.game_id,
                 creation_date=game_db.creation_date).build_to_update().to_dict()

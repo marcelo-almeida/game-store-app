@@ -3,7 +3,7 @@ import logging
 from flask import make_response
 
 from configuration.decorators import handler_exception
-from service.game_service import create_game
+from service.game_service import create_game, update_game
 
 
 @handler_exception
@@ -24,7 +24,9 @@ def get(game_id: str):
 
 @handler_exception
 def put(game_id: str, body: dict):
-    return 'put game Connexion! {}'.format(game_id)
+    logging.info(f'Updating game. GameId:{game_id}')
+    body['gameId'] = game_id
+    return __create_response(response=update_game(request=body), success_status=200)
 
 
 @handler_exception

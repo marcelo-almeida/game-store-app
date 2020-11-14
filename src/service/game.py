@@ -49,7 +49,7 @@ class GameRepository(BaseRepository):
         super().__init__(table_name='store-game')
 
     @staticmethod
-    def __build_game(item: dict) -> Game:
+    def build_game(item: dict) -> Game:
         return Game(account=item.get('account'),
                     name=item.get('name'),
                     release_date=item.get('releaseDate'),
@@ -71,7 +71,7 @@ class GameRepository(BaseRepository):
             }
         )
         if response.get('Item'):
-            return self.__build_game(item=response.get('Item'))
+            return self.build_game(item=response.get('Item'))
         else:
             return None
 
@@ -92,7 +92,7 @@ class GameRepository(BaseRepository):
             response = self.table.scan()
         items = []
         for item in response.get('Items'):
-            items.append(self.__build_game(item=item))
+            items.append(self.build_game(item=item))
         return items
 
     def __validate_name(self, account: str, name: str) -> list:

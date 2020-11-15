@@ -46,7 +46,7 @@ paths:
           description: "Bad request"
         "401":
           description: "Unauthorized"
-  /game/{game_id}:
+  /account/{account}/game/{game_id}:
     get:
       produces:
       - "application/json"
@@ -55,6 +55,10 @@ paths:
         in: "path"
         required: true
         type: "string"
+      - name: "account"
+          in: "path"
+          required: true
+          type: "string"
       responses:
         "200":
           description: "Ok"
@@ -74,6 +78,9 @@ paths:
         in: "path"
         required: true
         type: "string"
+      - name: "account"
+          in: "path"
+          required: true
       - in: "body"
         name: "body"
         required: true
@@ -96,6 +103,9 @@ paths:
         in: "path"
         required: true
         type: "string"
+      - name: "account"
+          in: "path"
+          required: true
       responses:
         "200":
           description: "Ok"

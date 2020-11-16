@@ -12,8 +12,8 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "name"
-        in: "query"
+      - in: "query"
+        name: "name"
         required: false
         type: "string"
       responses:
@@ -46,11 +46,17 @@ paths:
           description: "Bad request"
         "401":
           description: "Unauthorized"
-  /game/{game_id}:
+  /account/{account}/game/{game_id}:
     get:
+      x-swagger-router-controller: controller.v1.game
+      operationId: get
       produces:
       - "application/json"
       parameters:
+      - name: "account"
+        in: "path"
+        required: true
+        type: "string"
       - name: "game_id"
         in: "path"
         required: true
@@ -65,11 +71,17 @@ paths:
         "404":
           description: "Not Found"
     put:
+      x-swagger-router-controller: controller.v1.game
+      operationId: put
       consumes:
       - "application/json"
       produces:
       - "application/json"
       parameters:
+      - name: "account"
+        in: "path"
+        required: true
+        type: "string"
       - name: "game_id"
         in: "path"
         required: true
@@ -89,9 +101,15 @@ paths:
         "401":
           description: "Unauthorized"
     delete:
+      x-swagger-router-controller: controller.v1.game
+      operationId: delete
       produces:
       - "application/json"
       parameters:
+      - name: "account"
+        in: "path"
+        required: true
+        type: "string"
       - name: "game_id"
         in: "path"
         required: true

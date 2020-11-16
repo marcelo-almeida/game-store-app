@@ -3,12 +3,13 @@ import logging
 from flask import make_response
 
 from configuration.decorators import handler_exception
-from service.game_service import create_game, update_game, get_game_by_id
+from service.game_service import create_game, update_game, get_game_by_id, search_games
 
 
 @handler_exception
-def search():
-    return 'search game Connexion!'
+def search(name: str = None):
+    logging.info('Searching games.')
+    return __create_response(response=search_games(name=name), success_status=200)
 
 
 @handler_exception

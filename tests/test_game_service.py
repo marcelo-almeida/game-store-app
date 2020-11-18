@@ -4,7 +4,7 @@ import pytest
 from werkzeug.exceptions import HTTPException
 
 from service.game import GameRepository
-from service.game_service import create_game, update_game
+from service.game_service import create_game, update_game, delete_game
 from service.platform import Platform
 from tests.base.game_constants import GAME_CREATE_PAYLOAD, GAME_UPDATE_PAYLOAD, INVALID_GAME_PAYLOAD
 
@@ -34,6 +34,19 @@ class TestGame:
         assert response
         assert 'error' not in response.keys()
         assert 'gameId' in response.keys()
+
+    @pytest.mark.parametrize('body', [
+        GAME_UPDATE_PAYLOAD
+    ])
+    def test_delete_game_with_success(self, body, mocker, platform):
+        game = GameRepository.build_game(GAME_UPDATE_PAYLOAD)
+        mocker.patch('boto3.resource')
+        get = mocker.patch('service.game.GameRepository.get',
+                           return_value=game)
+        delete = mocker.patch('service.game.GameRepository.delete')
+        delete_game(account=game.account, game_id=game.game_id)
+        get.assert_called_once_with(account=game.account, game_id=game.game_id)
+        delete.assert_called_once_with(account=game.account, game_id=game.game_id)
 
     @pytest.mark.parametrize('body', [
         GAME_UPDATE_PAYLOAD
@@ -130,3 +143,17 @@ class TestGame:
         assert not save.called
         assert not get.called
         assert 'Conflict' in str(ex)
+
+    @pytest.mark.parametrize('body', [
+        GAME_UPDATE_PAYLOAD
+    ])
+    def test_delete_game_not_found(self, body, mocker, platform):
+        game = GameRepository.build_game(GAME_UPDATE_PAYLOAD)
+        mocker.patch('boto3.resource')
+        get = mocker.patch('service.game.GameRepository.get', return_value=None)
+        delete = mocker.patch('service.game.GameRepository.delete')
+        with pytest.raises(HTTPException) as ex:
+            delete_game(account=game.account, game_id=game.game_id)
+        get.assert_called_once_with(account=game.account, game_id=game.game_id)
+        assert not delete.called
+        assert 'Not Found' in str(ex)

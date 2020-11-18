@@ -3,7 +3,7 @@ import logging
 from flask import make_response
 
 from configuration.decorators import handler_exception
-from service.game_service import create_game, update_game, get_game_by_id, search_games
+from service.game_service import create_game, update_game, get_game_by_id, search_games, delete_game
 
 
 @handler_exception
@@ -33,7 +33,9 @@ def put(account: str, game_id: str, body: dict):
 
 @handler_exception
 def delete(account: str, game_id: str):
-    return 'delete game Connexion! {}'.format(game_id)
+    logging.info('Deleting game.')
+    delete_game(account=account, game_id=game_id)
+    return __create_response(response={}, success_status=200)
 
 
 def __create_response(response: dict, success_status: int = 200):

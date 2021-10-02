@@ -8,7 +8,7 @@ from service.platform import Platform
 from service.platform_service import create_platform, update_platform
 
 
-# TODO: adding test to repo.get with none values
+# TODO: adding tests to repo.get with none values
 
 @parameterized([
     ({'name': 'ps4'}, True),

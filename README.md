@@ -18,13 +18,13 @@ A project to apply knowledge about python using the connexion framework
 
 # Run
 * It's necessary run the dynamodb before starting the application, 
-this can be done using the `deploy.py` file found in this repository
+this can be done using the `execute.py` file found in this repository
 use these commands below:
 
-    `python deploy.py -t ddb`
+    `python deploy/execute.py -t ddb`
 
-    `python ddb_create.py`
+    `python deploy/ddb_create.py`
 
 * Run the project using this command:
 
-    `python deploy.py -t app`
+    `python deploy/execute.py -t app`

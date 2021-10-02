@@ -8,7 +8,7 @@ client = boto3.client('dynamodb',
                       aws_secret_access_key='key')
 
 
-def _create_game_table():
+def __create_game_table():
     client.create_table(
         TableName='store-game',
         AttributeDefinitions=[
@@ -39,7 +39,7 @@ def _create_game_table():
     )
 
 
-def _create_platform_table():
+def __create_platform_table():
     client.create_table(
         TableName='store-platform',
         AttributeDefinitions=[
@@ -62,7 +62,7 @@ def _create_platform_table():
     )
 
 
-def _check_if_exists(table_name: str) -> bool:
+def __check_if_exists(table_name: str) -> bool:
     try:
         client.describe_table(
             TableName=table_name
@@ -73,11 +73,11 @@ def _check_if_exists(table_name: str) -> bool:
 
 
 def create_tables():
-    if not _check_if_exists(table_name='store-game'):
-        _create_game_table()
+    if not __check_if_exists(table_name='store-game'):
+        __create_game_table()
 
-    if not _check_if_exists(table_name='store-platform'):
-        _create_platform_table()
+    if not __check_if_exists(table_name='store-platform'):
+        __create_platform_table()
 
 
 if __name__ == '__main__':

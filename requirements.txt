@@ -1,5 +1,5 @@
-connexion==2.7.0
+connexion==2.9.0
 boto3
 botocore
 flask
-schema==0.7.3
+schema==0.7.4
